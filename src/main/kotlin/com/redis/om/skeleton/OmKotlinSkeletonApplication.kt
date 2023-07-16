@@ -4,6 +4,7 @@ import com.redis.om.skeleton.models.Address
 import com.redis.om.skeleton.models.Person
 import com.redis.om.skeleton.repositories.PeopleRepository
 import com.redis.om.spring.annotations.EnableRedisDocumentRepositories
+import com.redis.om.spring.search.stream.EntityStream
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import org.slf4j.Logger
@@ -17,11 +18,14 @@ import org.springframework.data.geo.Point
 
 @SpringBootApplication
 @EnableRedisDocumentRepositories("com.redis.om.skeleton.*")
-class OmKotlinDemoApplication(val repo: PeopleRepository) {
+class OmKotlinDemoApplication {
 	var logger: Logger = LoggerFactory.getLogger(OmKotlinDemoApplication::class.java)
 
 	@Bean
-	fun loadTestData(repo: PeopleRepository): CommandLineRunner {
+	fun loadTestData(
+		repo: PeopleRepository,
+		entityStream: EntityStream
+	): CommandLineRunner {
 		return CommandLineRunner { _ ->
 			repo.deleteAll()
 			val thorSays = "The Rabbit Is Correct, And Clearly The Smartest One Among You."
