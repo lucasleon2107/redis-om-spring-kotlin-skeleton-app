@@ -2,11 +2,13 @@ package com.redis.om.skeleton
 
 import com.redis.om.skeleton.models.Address
 import com.redis.om.skeleton.models.Person
+import com.redis.om.skeleton.models.`Person$`
 import com.redis.om.skeleton.repositories.PeopleRepository
 import com.redis.om.spring.annotations.EnableRedisDocumentRepositories
 import com.redis.om.spring.search.stream.EntityStream
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
+import java.util.stream.Collectors
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springdoc.core.models.GroupedOpenApi
@@ -80,6 +82,19 @@ class OmKotlinDemoApplication {
 			)
 			repo.saveAll(listOf(thor, ironman, blackWidow, wandaMaximoff, gamora, nickFury))
 			repo.findAll().forEach { p -> logger.info("🦸 Name: {} {}", p.firstName, p.lastName) }
+
+			// Filter with EntityStream and optional values
+			val firstName = "Robert"
+			val lastName = null
+
+			val personEntityStream = entityStream.of(Person::class.java)
+				.filter(`Person$`.FIRST_NAME.eq(firstName))
+				.filter(`Person$`.LAST_NAME.eq(lastName))
+				.collect(Collectors.toList())
+
+			personEntityStream.forEach { person ->
+				logger.info("🦸 Name: ${person.firstName} ${person.lastName}")
+			}
 		}
 	}
 
